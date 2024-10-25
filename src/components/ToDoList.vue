@@ -144,7 +144,6 @@ input[type='text'] {
   background-color: #f9f9f9;
   max-height: 80vh;
   max-width: 90vw;
-  min-height: 70vh;
   min-width: 70vh;
   overflow-y: auto;
 }
