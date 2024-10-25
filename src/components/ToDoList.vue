@@ -63,21 +63,21 @@ onMounted(() => {
 <template>
   <main class="app">
     <section class="create-todo">
-      <h1>MERMAID TODO LIST</h1>
+      <h1>WORKOUTS LIST</h1>
       <form @submit.prevent="addToDo">
-        <h3>ADD NEW TASK</h3>
+        <h3>ADD NEW WORKOUT</h3>
         <input
           type="text"
           placeholder="e.g. make a video"
           v-model="input_content"
         />
-        <input type="submit" value="Add task" />
+        <input type="submit" value="Add exercise" />
         <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
       </form>
     </section>
 
     <section class="todo-list">
-      <h3>TODO LIST</h3>
+      <h3>WORKOUTS LIST</h3>
       <div class="list-wrapper">
         <div class="list">
           <div
