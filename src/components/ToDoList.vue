@@ -14,12 +14,9 @@ const input_content = ref<string>('')
 
 const todos_asc = computed(() =>
   [...todos.value].sort((a, b) => {
-    // First, sort by done status: not done (false) comes first
     if (a.done === b.done) {
-      // If both have the same done status, sort by createdAt (newer first)
       return b.createdAt - a.createdAt
     }
-    // Prioritize not done tasks (false)
     return a.done ? 1 : -1
   }),
 )
