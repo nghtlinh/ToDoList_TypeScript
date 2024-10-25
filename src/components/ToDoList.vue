@@ -143,10 +143,10 @@ input[type='text'] {
   border-radius: 5px;
   padding: 15px;
   background-color: #f9f9f9;
-  max-height: 35vh;
   max-width: 90vw;
   min-width: 70vh;
   overflow-y: auto;
+  max-height: 35vh;
 }
 
 .todo-item {
