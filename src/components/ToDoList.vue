@@ -24,7 +24,7 @@ const errorMessage = ref<string>('')
 
 const addToDo = () => {
   if (input_content.value.trim() === '') {
-    errorMessage.value = 'Task content cannot be empty!'
+    errorMessage.value = 'Exercise content cannot be empty!'
     return
   }
 
@@ -68,7 +68,7 @@ onMounted(() => {
         <h3>ADD NEW WORKOUT</h3>
         <input
           type="text"
-          placeholder="e.g. make a video"
+          placeholder="e.g. 10000 push ups"
           v-model="input_content"
         />
         <input type="submit" value="Add exercise" />
