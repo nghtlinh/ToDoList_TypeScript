@@ -1,18 +1,194 @@
 <script setup lang="ts">
-import { TodoStatus } from '@/types'
-import TodoGroup from './TodoGroup.vue'
+import { ref, onMounted, computed, watch } from 'vue'
+
+interface Todo {
+  content: string
+  done: boolean
+  createdAt: number
+}
+
+const todos = ref<Todo[]>([])
+const name = ref<string>('')
+
+const input_content = ref<string>('')
+
+const todos_asc = computed(() =>
+  [...todos.value].sort((a, b) => {
+    // First, sort by done status: not done (false) comes first
+    if (a.done === b.done) {
+      // If both have the same done status, sort by createdAt (newer first)
+      return b.createdAt - a.createdAt
+    }
+    // Prioritize not done tasks (false)
+    return a.done ? 1 : -1
+  }),
+)
+const errorMessage = ref<string>('')
+
+const addToDo = () => {
+  if (input_content.value.trim() === '') {
+    errorMessage.value = 'Task content cannot be empty!'
+    return
+  }
+
+  todos.value.push({
+    content: input_content.value,
+    done: false,
+    createdAt: Date.now(),
+  })
+
+  input_content.value = ''
+  errorMessage.value = ''
+}
+
+const removeTodo = (todo: Todo) => {
+  todos.value = todos.value.filter(t => t !== todo)
+}
+
+watch(
+  todos,
+  newVal => {
+    localStorage.setItem('todos', JSON.stringify(newVal))
+  },
+  { deep: true },
+)
+
+watch(name, newVal => {
+  localStorage.setItem('name', newVal)
+})
+
+onMounted(() => {
+  name.value = localStorage.getItem('name') || ''
+  todos.value = JSON.parse(localStorage.getItem('todos') || '[]') as Todo[]
+})
 </script>
+
 <template>
-  <div class="groups-wrapper">
-    <TodoGroup :status="TodoStatus.Pending" />
-    <TodoGroup :status="TodoStatus.InProgress" />
-    <TodoGroup :status="TodoStatus.Completed" />
-  </div>
+  <main class="app">
+    <section class="create-todo">
+      <h1>MERMAID TODO LIST</h1>
+      <form @submit.prevent="addToDo">
+        <h3>ADD NEW TASK</h3>
+        <input
+          type="text"
+          placeholder="e.g. make a video"
+          v-model="input_content"
+        />
+        <input type="submit" value="Add task" />
+        <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
+      </form>
+    </section>
+
+    <section class="todo-list">
+      <h3>TODO LIST</h3>
+      <div class="list-wrapper">
+        <div class="list">
+          <div
+            v-for="todo in todos_asc"
+            :key="todo.createdAt"
+            :class="`todo-item ${todo.done ? 'done' : ''}`"
+          >
+            <label>
+              <input type="checkbox" v-model="todo.done" />
+              <span :class="`bubble`"></span>
+            </label>
+
+            <div class="todo-content">
+              <input type="text" v-model="todo.content" />
+            </div>
+
+            <div class="actions">
+              <button class="delete" @click="removeTodo(todo)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </template>
+
 <style scoped>
-.groups-wrapper {
+.app {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+}
+
+.todo-list {
+  margin-top: 10px;
+}
+
+h1 {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+h3 {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 40px;
+}
+
+.options {
+  margin-bottom: 10px;
+}
+
+.list-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  max-height: 80vh;
+  max-width: 90vw;
+  min-height: 70vh;
+  min-width: 70vh;
+  overflow-y: auto;
+}
+
+.todo-item {
   display: flex;
-  justify-content: space-around;
-  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.todo-content input {
+  min-width: 300px;
+  margin-left: 10px;
+  padding: 10px;
+  font-size: 18px;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.actions {
+  margin-left: 10px;
+}
+
+button.delete {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.done input[type='text'] {
+  text-decoration: line-through;
+  color: #ccc;
 }
 </style>
