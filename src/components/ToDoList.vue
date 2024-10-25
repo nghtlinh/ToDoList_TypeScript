@@ -146,7 +146,7 @@ input[type='text'] {
   max-width: 90vw;
   min-width: 70vh;
   overflow-y: auto;
-  max-height: 35vh;
+  max-height: 30vh;
 }
 
 .todo-item {
