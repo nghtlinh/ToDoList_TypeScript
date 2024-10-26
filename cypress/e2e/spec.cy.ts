@@ -5,7 +5,7 @@ describe('Todo App E2E Tests', () => {
   })
 
   it('should ensure the input box is present', () => {
-    cy.get('input[placeholder="e.g. 10000 push ups"]').should('exist')
+    cy.get('input[class="input-field"]').should('exist')
   })
 
   it('should add a todo through input box and it should appear in the list', () => {
@@ -44,5 +44,67 @@ describe('Todo App E2E Tests', () => {
     cy.get('.todo-item')
       .find('.todo-content input')
       .should('have.value', todoToAdd1)
+  })
+
+  it('should mark a todo as done when the checkbox is checked', () => {
+    const todoToAdd = '50 jumping jacks'
+
+    // Add a todo
+    cy.get('input[placeholder="e.g. 10000 push ups"]').type(todoToAdd)
+    cy.get('input[type="submit"]').click()
+
+    // Check the checkbox to mark the todo as done
+    cy.get('.todo-item').find('label').click()
+
+    // Verify that the todo item has the 'done' class
+    cy.get('.todo-item')
+      .should('have.class', 'done')
+      .find('.todo-content input')
+      .should(
+        'have.css',
+        'text-decoration',
+        'line-through solid rgb(204, 204, 204)',
+      )
+  })
+
+  it('should show an error message when trying to add an empty todo', () => {
+    // Attempt to add an empty todo
+    cy.get('input[type="submit"]').click()
+
+    // Verify that the error message is displayed
+    cy.get('p').should('have.text', 'Exercise content cannot be empty!')
+  })
+
+  it('should persist todos in local storage', () => {
+    const todoToAdd = '20 push ups'
+
+    // Add a todo
+    cy.get('input[placeholder="e.g. 10000 push ups"]').type(todoToAdd)
+    cy.get('input[type="submit"]').click()
+
+    // Refresh the page to check for persistence
+    cy.reload()
+
+    // Verify that the todo still exists after reload
+    cy.get('.todo-item')
+      .find('.todo-content input')
+      .should('have.value', todoToAdd)
+  })
+
+  it('should update the content of an existing todo', () => {
+    const todoToAdd = '200 sit-ups'
+
+    // Add a todo
+    cy.get('input[placeholder="e.g. 10000 push ups"]').type(todoToAdd)
+    cy.get('input[type="submit"]').click()
+
+    // Update the content of the existing todo
+    const updatedTodo = '300 sit-ups'
+    cy.get('.todo-item').find('.todo-content input').clear().type(updatedTodo)
+
+    // Verify that the todo content has been updated
+    cy.get('.todo-item')
+      .find('.todo-content input')
+      .should('have.value', updatedTodo)
   })
 })

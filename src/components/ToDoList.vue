@@ -68,6 +68,7 @@ onMounted(() => {
         <h3>ADD NEW WORKOUT</h3>
         <input
           type="text"
+          class="input-field"
           placeholder="e.g. 10000 push ups"
           v-model="input_content"
         />
